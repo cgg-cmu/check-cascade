@@ -1,0 +1,121 @@
+<html>
+<head>
+    <style>
+        .fail {
+            background-color: pink;
+        }
+        .pass {
+            background-color: palegreen;
+        }
+    </style>
+<script>
+
+var sites = {};
+var cmsNames = [];
+window.onload = function () {
+
+makeTable();
+
+};
+
+const table = `    <table id="list">
+        <tr><td>Status</td>
+            <td>
+                CMS Key
+            </td>
+            <td>
+                Name
+            </td>
+            <td>
+                URL
+            </td>`
+
+
+ const endtable =      ` </tr>
+    </table>`;
+
+function parserow(row){
+
+
+
+}
+
+
+function checkItem(cms) {
+    var selector = document.querySelector("#"+cms);
+    selector.classList = [];
+    var oldvalues  =  selector.innerHTML;
+    var url = selector.dataset.url;
+    var matches = [`'id="siteId"/>'`,
+    `cms': 'cascade'`,
+    `noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-5Q36JQ" style="display:none;visibility:hidden" width="0"></iframe></noscript>`
+    ];
+
+    var nomatches = ['<script src="//www.cmu.edu/__utm.js" type="text/javascript">'];
+
+
+    fetch("eval/"+cms).then(response => response.json())
+    .then(response => {
+
+        var pass = false;
+
+            if(response.passSiteId && response.passDataLayer && response.passNoScript && response.passRemoveUTM)
+            {
+                pass = true;
+
+            }
+
+
+        if(pass) {
+            selector.classList.remove('fail');
+            selector.classList.add('pass');
+        } else {
+            selector.classList.add('fail');
+        }
+
+    });
+
+};
+
+
+function makeTable() {
+    var inject = "";
+
+    fetch('/sites')
+        .then(response => response.json())
+        .then(data => {
+            var inject = "";
+            console.log(data);
+            sites= data;
+            data.forEach(element => {
+                inject += `<tr id="${element.cms.replace('.','')}" data-url="${element.url}" ><td></td><td>${element.cms}</td><td>${element.name}</td><td><a href="${element.url}">${element.url}</a></td><td><button class="row-button" onclick="checkItem("${element.cms}"")">Check Site</button></td>`
+                    cmsNames.push(element.cms.replace('.',''));
+            });
+            document.querySelector("#list").innerHTML = table + inject + endtable;
+
+            cmsNames.forEach(element => {
+                checkItem(element);
+            });
+        });
+
+}
+
+
+</script>
+
+
+</head>
+
+<body>
+
+
+<button id="check-all" onclick="makeTable();">check all</button>
+
+<div id="list">
+
+
+
+</div>
+
+</body>
+</html>
