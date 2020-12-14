@@ -88,7 +88,7 @@ function makeTable() {
             console.log(data);
             sites= data;
             data.forEach(element => {
-                inject += `<tr id="${element.cms.replace('.','')}" data-url="${element.url}" ><td></td><td>${element.cms}</td><td>${element.name}</td><td><a href="${element.url}">${element.url}</a></td><td><button class="row-button" onclick="checkItem("${element.cms}"")">Check Site</button></td>`
+                inject += `<tr id="${element.cms.replace('.','')}" data-url="${element.url}" ><td></td><td>${element.cms}</td><td>${element.name}</td><td><a href="${element.url}">${element.url}</a></td><td><button class="row-button" onclick="checkItem('${element.cms}')">Check Site</button></td>`
                     cmsNames.push(element.cms.replace('.',''));
             });
             document.querySelector("#list").innerHTML = table + inject + endtable;
